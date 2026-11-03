@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
+# Вы пишите это сейчас, даже если файла validators.py еще нет в природе!
+from validators import validate_user_text 
 
 app = Flask(__name__)
 
