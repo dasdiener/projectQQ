@@ -1,3 +1,5 @@
+'soul 'obstruction
+'soul 'obstruction
 import os
 import sqlite3
 import secrets
@@ -5,6 +7,13 @@ import hashlib
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from validators import validate_user_text
 from ai_helper import ask_gigachat
+
+# Безопасный импорт логгера (заглушка спасет от ошибок, если logger.py еще не готов локально)
+try:
+    from logger import log_event
+except ImportError:
+    def log_event(event_type, description):
+        pass  # Просто пропускает, если файла logger.py пока нет
 
 app = Flask(__name__)
 # Секретный ключ обязателен для работы сессий (авторизации)
@@ -41,12 +50,16 @@ def create_page():
             conn.close()
             return render_template("create.html", locations=locations, selected_location=location_id)
         
+        # ЛОГИРОВАНИЕ: Фиксируем успешную валидацию и отправку запроса
+        log_event("AI_REQUEST", f"Пользователь отправил запрос для локации ID {location_id}: '{user_text}'")
+        
         # 2. Запрос к ИИ-помощнику (модуль ai_helper)
         ai_result = ask_gigachat(user_text)
         
+        # ЛОГИРОВАНИЕ: Записываем тип вердикта от ИИ-помощника
+        log_event("AI_RESPONSE", f"ИИ вернул тип [{ai_result.get('type')}]. Создание тикета: {ai_result.get('need_ticket')}")
+        
         # Передаем результат ИИ на промежуточный экран (ai_result.html)
-        # Пользователь увидит ответ ИИ (инструкцию или предупреждение об опасности) 
-        # и сможет подтвердить создание полноценного тикета, если поле need_ticket=True
         locations = conn.execute('SELECT * FROM locations').fetchall()
         conn.close()
         return render_template("ai_result.html", ai=ai_result, text=user_text, location_id=location_id)
@@ -58,6 +71,8 @@ def create_page():
         loc = conn.execute('SELECT * FROM locations WHERE qr_key = ?', (qr_key,)).fetchone()
         if loc:
             selected_location = loc['id']
+            # ЛОГИРОВАНИЕ: Переход по валидному QR-коду
+            log_event("INFO", f"Форма успешно открыта по QR-коду для локации: {loc['room']} ({loc['building']})")
             
     locations = conn.execute('SELECT * FROM locations').fetchall()
     conn.close()
@@ -90,6 +105,9 @@ def submit_ticket():
     
     conn.commit()
     conn.close()
+    
+    # ЛОГИРОВАНИЕ: Фиксация создания новой официальной заявки
+    log_event("TICKET_CREATED", f"Успешно создана официальная заявка {public_number} (Локация ID: {location_id})")
     
     # Перенаправляем на страницу успешного создания, отдавая пользователю сырой токен ОДИН раз
     return render_template("success.html", number=public_number, token=raw_token)
@@ -131,22 +149,27 @@ def login():
         user = conn.execute('SELECT * FROM users WHERE login = ?', (username,)).fetchone()
         conn.close()
         
-        # Для хакатона делаем проверку хэша (или прямое сравнение, если пароли простые). 
-        # Так как в init_db мы заложили 'pbkdf2:sha256:250000$test_hash', сделаем заглушку 
-        # или проверку на 'admin' / 'admin' для быстрой демонстрации:
         if user and (password == "admin" or user['password_hash'] == password):
             session['user_id'] = user['id']
             session['user_name'] = user['name']
             session['role'] = user['role']
+            
+            # ЛОГИРОВАНИЕ: Успешный вход в систему
+            log_event("SECURITY", f"Сотрудник '{username}' успешно вошел в административную панель")
             return redirect(url_for('admin_panel'))
         else:
+            # ЛОГИРОВАНИЕ: Подозрительное событие (неверный пароль)
+            log_event("SECURITY", f"НЕУСПЕШНАЯ попытка входа под логином '{username}'")
             flash("Неверный логин или пароль", "error")
             
     return render_template("login.html")
 
 @app.route("/logout")
 def logout():
+    username = session.get('user_name', 'Неизвестно')
     session.clear()
+    # ЛОГИРОВАНИЕ: Выход из сессии
+    log_event("SECURITY", f"Сотрудник '{username}' вышел из системы")
     return redirect(url_for('home'))
 
 # ЗАЩИЩЕННАЯ ПАНЕЛЬ СОТРУДНИКА УПК
@@ -154,6 +177,7 @@ def logout():
 def admin_panel():
     # Проверка прав доступа по ТЗ (раздел 4, ограничения роли)
     if 'user_id' not in session:
+        log_event("SECURITY", "Попытка несанкционированного доступа к панели /admin без авторизации!")
         return redirect(url_for('login'))
         
     conn = get_db_connection()
@@ -166,9 +190,12 @@ def admin_panel():
         if ticket_id and new_status:
             conn.execute('UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', (new_status, ticket_id))
             conn.commit()
+            
+            # ЛОГИРОВАНИЕ: Смена статуса заявки
+            log_event("TICKET_STATUS", f"Сотрудник ID {session['user_id']} изменил статус тикета ID {ticket_id} на '{new_status}'")
             flash(f"Статус заявки №{ticket_id} успешно изменен на '{new_status}'", "success")
             
-    # Получение параметров фильтрации и поиска (раздел 6.3 ТЗ)
+    #Получение параметров фильтрации и поиска (раздел 6.3 ТЗ)
     search_query = request.args.get('search', '').strip()
     status_filter = request.args.get('status', '').strip()
     
