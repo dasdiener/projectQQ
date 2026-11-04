@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель сотрудника УПК</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container" style="max-width: 1200px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Панель сотрудника</h1>
+            <a href="index.html" class="btn btn-outline">Выйти</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Номер заявки</th>
+                        <th>Кабинет</th>
+                        <th>Текст проблемы</th>
+                        <th>Текущий статус</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>#UPK-1024</strong></td>
+                        <td>214</td>
+                        <td>Не работает проектор, не выводит изображение с ноутбука.</td>
+                        <td><span style="color: var(--primary); font-weight: 600;">В работе</span></td>
+                        <td>
+                            <select class="status-select">
+                                <option value="new">Новая</option>
+                                <option value="in_progress" selected>В работе</option>
+                                <option value="resolved">Решена</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>#UPK-1025</strong></td>
+                        <td>305</td>
+                        <td>Сломалась ручка на входной двери.</td>
+                        <td><span style="color: var(--text-muted); font-weight: 600;">Новая</span></td>
+                        <td>
+                            <select class="status-select">
+                                <option value="new" selected>Новая</option>
+                                <option value="in_progress">В работе</option>
+                                <option value="resolved">Решена</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>#UPK-1026</strong></td>
+                        <td>Лаб. 1</td>
+                        <td>В розетке искрит, пахнет горелым.</td>
+                        <td><span style="color: var(--success); font-weight: 600;">Решена</span></td>
+                        <td>
+                            <select class="status-select">
+                                <option value="new">Новая</option>
+                                <option value="in_progress">В работе</option>
+                                <option value="resolved" selected>Решена</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <button class="btn btn-primary" onclick="alert('Статусы успешно обновлены!')">Обновить</button>
+        </div>
+    </div>
+</body>
+</html>

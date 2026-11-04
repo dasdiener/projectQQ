@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка статуса</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div style="margin-bottom: 20px;">
+            <a href="index.html" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+        </div>
+
+        <div class="status-card">
+            <h2>Проверка статуса заявки</h2>
+            <p>Введите 8-значный секретный код, который вы получили после создания заявки.</p>
+            
+            <form action="#" method="GET" style="margin-top: 20px; margin-bottom: 30px;">
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <input type="text" name="token" placeholder="Например: A1B2C3D4" maxlength="8" style="flex: 1; text-transform: uppercase;">
+                    <button type="submit" class="btn btn-primary">Узнать статус</button>
+                </div>
+            </form>
+
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: var(--bg-color);">
+                <h3 style="color: var(--success); margin-bottom: 15px;">Заявка найдена</h3>
+                <p><strong>Номер:</strong> #UPK-1024</p>
+                <p><strong>Кабинет:</strong> 214</p>
+                <p><strong>Что случилось:</strong> Не работает проектор, не выводит изображение с ноутбука.</p>
+                <p><strong>Текущий статус:</strong> <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">В работе</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат проверки ИИ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div style="margin-bottom: 20px;">
+            <a href="index.html" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+        </div>
+
+        <!-- БЛОК 1: Опасность (Красный) -->
+        <div class="ai-block block-danger">
+            <h3>Внимание! Потенциальная опасность</h3>
+            <p>Не пытайтесь устранить неисправность самостоятельно. Отойдите на безопасное расстояние, не трогайте оборудование и немедленно сообщите ответственному сотруднику или в экстренную службу.</p>
+        </div>
+
+        <!-- БЛОК 2: Инструкция (Синий) -->
+        <div class="ai-block block-info">
+            <h3>Инструкция</h3>
+            <p>Чтобы подключить ноутбук к проектору: 1. Подключите HDMI-кабель к ноутбуку. 2. Нажмите Win+P и выберите «Дублировать». 3. Если изображения нет, проверьте источник сигнала на проекторе (кнопка Source).</p>
+            <a href="index.html" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Вернуться на главную</a>
+        </div>
+
+        <!-- БЛОК 3: Поломка (Желтый) -->
+        <div class="ai-block block-warning">
+            <h3>Требуется мастер</h3>
+            <p>Судя по описанию, оборудование неисправно. Рекомендуем зафиксировать заявку, чтобы сотрудник УПК назначил исполнителя.</p>
+            
+            <form action="check_status.html" method="GET">
+                <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
