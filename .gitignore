@@ -11,3 +11,4 @@ __pycache__/
 # Настройки VS Code / PyCharm (если используете)
 .vscode/
 .idea/
+app_logs.txt
