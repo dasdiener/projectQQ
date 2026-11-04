@@ -4,7 +4,18 @@ def init_db():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # 1. Таблица локаций (помещений)
+    # 1. Таблица пользователей (Добавлена для авторизации сотрудников УПК согласно ТЗ)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            login TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'Сотрудник'
+        )
+    ''')
+
+    # 2. Таблица локаций (помещений)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS locations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,7 +27,7 @@ def init_db():
         )
     ''')
 
-    # 2. Таблица категорий неисправностей
+    # 3. Таблица категорий неисправностей
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +36,7 @@ def init_db():
         )
     ''')
 
-    # 3. Таблица заявок (Tickets)
+    # 4. Таблица заявок (Tickets)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tickets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,7 +65,7 @@ def init_db():
         ('Корпус Б', '1', '101', 'Актовый зал', 'qr_zone_act'),
     ])
 
-    # Наполняем базовыми категориями
+    # Наполняем базовыми категориями (Синхронизировано с названиями из ТЗ и AI)
     cursor.executemany('''
         INSERT OR IGNORE INTO categories (name, description)
         VALUES (?, ?)
@@ -62,8 +73,18 @@ def init_db():
         ('Оборудование', 'Проблемы с проекторами, ПК, принтерами'),
         ('Мебель', 'Сломанные стулья, парты, двери'),
         ('Электрика', 'Не работают розетки, искрение, свет'),
-        ('Чистота', 'Требуется уборка помещения')
+        ('Инфраструктура/Интернет', 'Проблемы с сетью и интернетом'),
+        ('Уборка', 'Требуется уборка или клининг помещения'),
+        ('Общее', 'Другие вопросы и проблемы')
     ])
+
+    # Добавляем тестового админа/сотрудника (пароль захешируем или проверим в app.py)
+    # Для хакатона можно использовать простой хэш или проверку. 
+    # Допустим, пока запишем тестового пользователя:
+    cursor.execute('''
+        INSERT OR IGNORE INTO users (name, login, password_hash, role)
+        VALUES (?, ?, ?, ?)
+    ''', ('Иван Цветков', 'admin', 'pbkdf2:sha256:250000$test_hash', 'Администратор'))
 
     conn.commit()
     conn.close()
