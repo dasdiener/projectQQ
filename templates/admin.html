@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <!-- Флеш-сообщения (если есть) -->
+        <!-- Флеш-сообщения -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -33,7 +33,7 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Таблица -->
+        <!-- Таблица заявок -->
         <div class="table-container">
             <table>
                 <thead>
@@ -55,13 +55,19 @@
                         <td>{{ ticket.description }}</td>
                         <td><span style="color: #c4b5fd; font-weight: 600;">{{ ticket.status }}</span></td>
                         <td>
-                            <form action="/update_status/{{ ticket.id }}" method="POST" style="display: flex; gap: 10px;">
+                            <!-- ИСПРАВЛЕННАЯ ФОРМА: отправляет POST прямо на /admin -->
+                            <form action="/admin" method="POST" style="display: flex; gap: 10px; align-items: center;">
+                                <!-- Скрытое поле, которое ждет твой Python-код -->
+                                <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                                
                                 <select name="status" class="status-select">
                                     <option value="Новая" {% if ticket.status == 'Новая' %}selected{% endif %}>Новая</option>
                                     <option value="В работе" {% if ticket.status == 'В работе' %}selected{% endif %}>В работе</option>
                                     <option value="Решена" {% if ticket.status == 'Решена' %}selected{% endif %}>Решена</option>
                                 </select>
+                                
                                 <input type="text" name="note" placeholder="Причина/заметка" style="padding: 8px; width: 150px; font-size: 14px;">
+                                
                                 <button type="submit" class="btn btn-primary" style="padding: 8px 15px; font-size: 14px;">Сохранить</button>
                             </form>
                         </td>
