@@ -187,8 +187,10 @@ def check_status():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("login") # Синхронизировано имя поля с login.html
+                # Ловим логин из любого возможного имени поля фронтенда (login или username)
+        username = request.form.get("login") or request.form.get("username")
         password = request.form.get("password")
+
         
         conn = get_db_connection()
         # Исправлен регистр таблицы Users
