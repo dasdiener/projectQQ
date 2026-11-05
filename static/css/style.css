@@ -2,8 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
+    --primary: #6A5ACD;
+    --primary-hover: #483D8B;
     --bg-color: #f8fafc;
     --surface: #ffffff;
     --text-main: #1e293b;
@@ -19,6 +19,9 @@
     --warning-border: #fbbf24;
     --warning-text: #92400e;
     --success: #10b981;
+    /* Новые переменные для главной страницы */
+    --dark-bg: #13111c;
+    --dark-surface: #1e1b2e;
 }
 
 * {
@@ -29,9 +32,8 @@
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    line-height: 1.5;
+    background-color: var(--dark-bg); /* Темный фон */
+    color: var(--text-main);    line-height: 1.5;
     padding: 20px;
     display: flex;
     justify-content: center;
@@ -57,15 +59,32 @@ p { color: var(--text-muted); margin-bottom: 15px; }
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    border: none;
+    border: 1px solid transparent; /* Добавили рамку */
     transition: all 0.2s ease;
     font-size: 16px;
 }
 
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-hover); }
-.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-.btn-outline:hover { background: var(--bg-color); }
+/* Главная кнопка (полупрозрачная) */
+.btn-primary { 
+    background: rgba(106, 90, 205, 0.15); 
+    color: #c4b5fd; 
+    border-color: var(--primary); 
+}
+.btn-primary:hover { 
+    background: rgba(106, 90, 205, 0.3);
+    color: #ffffff; 
+}
+
+/* Второстепенные кнопки */
+.btn-outline { 
+    background: transparent; 
+    border: 1px solid #4c1d95; 
+    color: #e2e8f0; 
+}
+.btn-outline:hover { 
+    background: rgba(106, 90, 205, 0.1); 
+    border-color: var(--primary);
+}
 .btn-success { background: var(--success); color: white; }
 .btn-success:hover { filter: brightness(0.9); }
 .btn-block { width: 100%; }
@@ -73,13 +92,28 @@ p { color: var(--text-muted); margin-bottom: 15px; }
 /* Главная страница */
 .hero {
     text-align: center;
-    padding: 40px 20px;
-    background: var(--surface);
+    padding: 50px 40px;
+    background: var(--dark-surface);
     border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid #3b2d68;
 }
-.hero h1 { font-size: 32px; margin-bottom: 10px; }
-.hero p { font-size: 18px; margin-bottom: 30px; }
+
+.hero h1 { 
+    font-size: 36px; 
+    margin-bottom: 15px; 
+    background: linear-gradient(90deg, #a855f7, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.hero p { 
+    font-size: 18px; 
+    margin-bottom: 35px; 
+    color: #94a3b8;
+}
+
 .hero-buttons {
     display: flex;
     flex-direction: column;

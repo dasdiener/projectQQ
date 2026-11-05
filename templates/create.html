@@ -9,32 +9,31 @@
 <body>
     <div class="container">
         <div style="margin-bottom: 20px;">
-            <a href="index.html" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
         </div>
         
         <div class="status-card">
             <h2>Новое обращение</h2>
             <p>Пожалуйста, опишите вашу проблему или задайте вопрос как можно подробнее.</p>
             
-            <form action="ai_result.html" method="GET" style="margin-top: 20px;">
-                <div class="form-group">
-                    <label for="location">Выберите кабинет</label>
-                    <select name="location_id" id="location" required>
-                        <option value="" disabled selected>-- Выберите локацию --</option>
-                        <option value="214">Кабинет 214</option>
-                        <option value="305">Кабинет 305</option>
-                        <option value="lab1">Лаборатория 1</option>
-                        <option value="hall">Общая зона (Холл)</option>
-                    </select>
-                </div>
+            <form action="/create" method="POST" style="margin-top: 20px;">
+    <div class="form-group">
+        <label for="location">Выберите кабинет</label>
+        <select name="location_id" id="location" required>
+            <option value="" disabled selected>-- Выберите локацию --</option>
+            {% for loc in locations %}
+                <option value="{{ loc.id }}">{{ loc.room }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-                <div class="form-group">
-                    <label for="user_text">Описание проблемы</label>
-                    <textarea name="user_text" id="user_text" placeholder="Например: В кабинете 214 не работает проектор..." required></textarea>
-                </div>
+    <div class="form-group">
+        <label for="user_text">Описание проблемы</label>
+        <textarea name="description" id="user_text" placeholder="Например: В кабинете 214 не работает проектор..." required></textarea>
+    </div>
 
-                <button type="submit" class="btn btn-primary btn-block mt-4">Отправить ИИ на проверку</button>
-            </form>
+    <button type="submit" class="btn btn-primary btn-block mt-4">Отправить ИИ на проверку</button>
+</form>
         </div>
     </div>
 </body>
