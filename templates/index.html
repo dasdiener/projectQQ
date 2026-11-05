@@ -8,17 +8,40 @@
 </head>
 <body>
     <div class="container">
+        <!-- Кнопка переключения темы -->
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
         <div class="hero">
-            <h1>УПК: Цифровой помощник</h1>
-            <p>Единый центр обращений по вопросам состояния помещений, оборудования и infrastructure колледжа.</p>
+            <h1 style="color: var(--primary);">УПК: Цифровой помощник</h1>
+            <p>Единый центр обращений по вопросам состояния помещений, оборудования и инфраструктуры колледжа.</p>
             
-            <div class="hero-buttons">
-                <!-- Заменили статические .html ссылки на чистые роуты Flask -->
+            <div class="hero-buttons" style="display: flex; gap: 10px; margin-top: 25px;">
                 <a href="/create" class="btn btn-primary">Подать обращение</a>
                 <a href="/check_status" class="btn btn-outline">Проверить статус</a>
                 <a href="/admin" class="btn btn-outline">Панель сотрудника</a>
             </div>
         </div>
     </div>
+
+    <!-- Маленький скрипт автоматического переключения тем -->
+    <script>
+        const toggleBtn = document.getElementById('themeToggle');
+        
+        // При загрузке проверяем сохраненную тему в браузере
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            
+            // Сохраняем выбор пользователя
+            if (document.body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
 </body>
 </html>

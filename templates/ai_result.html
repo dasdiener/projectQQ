@@ -8,59 +8,72 @@
 </head>
 <body>
     <div class="container">
-        <div style="margin-bottom: 20px;">
-            <!-- Исправлена ссылка на роут создания новой заявки -->
-            <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">&larr; Назад к форме</a>
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px;">
+            <a href="/" style="color: var(--text-muted); text-decoration: none;">&larr; На главную</a>
+            <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">Изменить запрос</a>
         </div>
 
-        {# Проверяем тип ответа ИИ, который пришел из бэкенда (переменная ai_res) #}
-
-        <!-- БЛОК 1: Опасность (Красный) -->
         {% if ai_res.type == 'Потенциальная опасность' %}
         <div class="ai-block block-danger">
             <h3>Внимание! Потенциальная опасность</h3>
             <p>{{ ai_res.answer }}</p>
+            <div style="margin-top: 15px;">
+                <a href="/" class="btn btn-outline" style="color: var(--danger-text); border-color: var(--danger-text);">Вернуться на главную</a>
+            </div>
         </div>
         {% endif %}
 
-        <!-- БЛОК 2: Инструкция (Синий) -->
         {% if ai_res.type == 'Информационный вопрос' %}
         <div class="ai-block block-info">
             <h3>{{ ai_res.title }}</h3>
             <p>{{ ai_res.answer }}</p>
-            <a href="/create?room={{ location_room or '' }}" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Вернуться назад</a>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <a href="/" class="btn btn-primary">Понятно, на главную</a>
+                <a href="/create?room={{ location_room or '' }}" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Задать другой вопрос</a>
+            </div>
         </div>
         {% endif %}
 
-        <!-- БЛОК 3: Поломка (Желтый) -->
         {% if ai_res.type == 'Обычная неисправность' %}
         <div class="ai-block block-warning">
             <h3>Требуется мастер (Категория: {{ ai_res.category }})</h3>
             <p>Вы ввели: <em>"{{ user_text }}"</em></p>
             <p>Судя по описанию, оборудование или имущество неисправно. Нажмите на кнопку ниже, чтобы официально зарегистрировать инцидент в системе УПК.</p>
             
-            <!-- Форма отправляет данные на созданный роут фиксации в базу -->
             <form action="/submit_ticket" method="POST">
-                <!-- Передаем скрытые параметры, которые ИИ уже распарсил, чтобы не вводить их заново -->
                 <input type="hidden" name="description" value="{{ user_text }}">
                 <input type="hidden" name="location_id" value="{{ location_id }}">
                 <input type="hidden" name="title" value="{{ ai_res.title }}">
                 <input type="hidden" name="category" value="{{ ai_res.category }}">
                 
-                <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
+                    <a href="/" class="btn btn-outline">Отмена</a>
+                </div>
             </form>
         </div>
         {% endif %}
 
-        <!-- БЛОК 4: Недостаточно данных (Дополнительная страховка под логику ИИ) -->
         {% if ai_res.type == 'Недостаточно данных' %}
         <div class="ai-block block-info" style="border-color: var(--border);">
             <h3>{{ ai_res.title }}</h3>
             <p>{{ ai_res.answer }}</p>
-            <a href="/create?room={{ location_room or '' }}" class="btn btn-outline">Попробовать снова</a>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <a href="/create?room={{ location_room or '' }}" class="btn btn-primary">Попробовать снова</a>
+                <a href="/" class="btn btn-outline">На главную</a>
+            </div>
         </div>
         {% endif %}
-
     </div>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    </script>
 </body>
 </html>

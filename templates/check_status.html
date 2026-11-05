@@ -8,56 +8,52 @@
 </head>
 <body>
     <div class="container">
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
         <div style="margin-bottom: 20px;">
-            <!-- Исправлена ссылка на роут создания новой заявки -->
-            <a href="/create" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
         </div>
 
         <div class="status-card">
             <h2>Проверка статуса заявки</h2>
             <p>Введите секретный токен отслеживания, который вы получили после создания обращения.</p>
             
-            <!-- Форма отправляет GET-запрос на этот же роут /check_status -->
             <form action="/check_status" method="GET" style="margin-top: 20px; margin-bottom: 30px;">
                 <div class="form-group" style="display: flex; gap: 10px;">
-                    <!-- Поле принимает токен и сохраняет введенное значение в value -->
                     <input type="text" name="token" placeholder="Вставьте токен отслеживания..." value="{{ request.args.get('token', '') }}" style="flex: 1;">
                     <button type="submit" class="btn btn-primary">Узнать статус</button>
                 </div>
             </form>
 
-            {# Сценарий 1: Заявка успешно найдена в базе по хэшу токена #}
             {% if ticket %}
-            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: var(--bg-color);">
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: var(--bg-main);">
                 <h3 style="color: var(--success); margin-bottom: 15px;">Заявка найдена</h3>
                 <p><strong>Официальный номер:</strong> {{ ticket.public_number }}</p>
                 <p><strong>Помещение:</strong> Кабинет {{ ticket.room or 'Не указан' }} ({{ ticket.building or '' }})</p>
                 <p><strong>Тема инцидента:</strong> {{ ticket.title }}</p>
                 <p><strong>Что случилось:</strong> {{ ticket.description }}</p>
                 <p><strong>Текущий статус:</strong> 
-                    {% if ticket.status == 'Новая' %}
-                        <span style="background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">{{ ticket.status }}</span>
-                    {% elif ticket.status == 'В работе' or ticket.status == 'На рассмотрении' %}
-                        <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">{{ ticket.status }}</span>
-                    {% elif ticket.status == 'Решена' or ticket.status == 'Выполнено' %}
-                        <span style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">{{ ticket.status }}</span>
-                    {% else %}
-                        <span style="background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">{{ ticket.status }}</span>
-                    {% endif %}
+                    <span style="font-weight: 600; color: var(--primary);">{{ ticket.status }}</span>
                 </p>
                 <p><small>Дата регистрации: {{ ticket.created_at }}</small></p>
             </div>
             {% endif %}
 
-            {# Сценарий 2: Пользователь ввел токен, но в базе совпадений нет #}
             {% if error_message %}
             <div class="ai-block block-danger" style="padding: 15px; border-radius: 8px;">
                 <h3 style="margin-top: 0;">Ошибка проверки</h3>
                 <p style="margin-bottom: 0;">{{ error_message }}</p>
             </div>
             {% endif %}
-            
         </div>
     </div>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    </script>
 </body>
 </html>

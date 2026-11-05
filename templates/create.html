@@ -8,26 +8,24 @@
 </head>
 <body>
     <div class="container">
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
         <div style="margin-bottom: 20px;">
-            <!-- Ссылка ведет на главную или на роут проверки статуса -->
-            <a href="{{ url_for('check_status') }}" style="color: var(--primary); text-decoration: none;">&larr; Проверить статус существующей заявки</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
         </div>
         
         <div class="status-card">
             <h2>Новое обращение</h2>
             <p>Пожалуйста, опишите вашу проблему или задайте вопрос как можно подробнее.</p>
             
-            <!-- Форма отправляет POST запрос на роут обработки ввода /create -->
             <form action="/create" method="POST" style="margin-top: 20px;">
                 <div class="form-group">
                     <label for="location">Помещение</label>
                     <select name="location_id" id="location" required>
-                        <!-- Если комната передана через QR, выводим её как единственную и выбранную -->
                         {% if active_location %}
                             <option value="{{ active_location.id }}" selected>Кабинет {{ active_location.room }} ({{ active_location.building }})</option>
                         {% else %}
                             <option value="" disabled selected>-- Выберите локацию --</option>
-                            <!-- Динамический список локаций, если открыли общую форму без QR -->
                             {% if locations %}
                                 {% for loc in locations %}
                                     <option value="{{ loc.id }}">Кабинет {{ loc.room }} ({{ loc.building }})</option>
@@ -43,7 +41,6 @@
 
                 <div class="form-group">
                     <label for="user_text">Описание проблемы или ваш вопрос</label>
-                    <!-- Переменная name изменена на user_text, чтобы совпадать с логикой приема роута -->
                     <textarea name="user_text" id="user_text" placeholder="Например: Из розетки идет искрение... или Как подключить ноутбук к проектору?" required></textarea>
                 </div>
 
@@ -51,5 +48,13 @@
             </form>
         </div>
     </div>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    </script>
 </body>
 </html>
