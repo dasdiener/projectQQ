@@ -10,7 +10,7 @@
     <div class="container">
         <div style="margin-bottom: 20px;">
             <!-- Исправлена ссылка на роут создания новой заявки -->
-            <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">&larr; Назад к форме</a>
+            <a href="{{ url_for('create') if 'create' in request.url_rule.endpoint else '/' }}" style="color: var(--primary); text-decoration: none;">&larr; Назад к форме</a>
         </div>
 
         {# Проверяем тип ответа ИИ, который пришел из бэкенда (переменная ai_res) #}
