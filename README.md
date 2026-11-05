@@ -34,23 +34,26 @@ projectQQ/
 
 ## Схема основной таблицы базы данных (Tickets)
 
+```text
 +-----------------------------------+
 
 |              Tickets              |
 +-----------------------------------+
 
-| id (INTEGER, PK, AUTOINCREMENT)   |
-| public_number (TEXT, UNIQUE, NN)  | -- Уникальный номер формата REQ-XXXXXX
-| title (TEXT, NOT NULL)            | -- Заголовок, генерируемый или определяемый ИИ
-| description (TEXT, NOT NULL)      | -- Текст описания проблемы от пользователя
-| category_id (INTEGER, FK)         | -- Ссылка на таблицу Categories (категории ИИ)
-| location_id (INTEGER, FK)         | -- Ссылка на таблицу Locations (локация из QR)
-| status (TEXT, DEFAULT 'Новая')    | -- Текущий статус обработки
-| created_at (DATETIME, DEFAULT CS) | -- Время создания записи
-| updated_at (DATETIME, DEFAULT CS) | -- Время последнего обновления
-| assignee_id (INTEGER, FK)         | -- Ссылка на таблицу Users (ответственный мастер)
-| tracking_token_hash (TEXT, NN)    | -- SHA-256 хеш от приватного токена отслеживания
+| id (INTEGER, PK, AUTOINCREMENT)   | -- Идентификатор заявки
+| public_number (TEXT, UNIQUE, NN)  | -- Номер формата REQ-XXXXXX
+| title (TEXT, NOT NULL)            | -- Заголовок (генерирует ИИ)
+| description (TEXT, NOT NULL)      | -- Текст проблемы от пользователя
+| category_id (INTEGER, FK)         | -- Ссылка на Categories.id
+| location_id (INTEGER, FK)         | -- Ссылка на Locations.id
+| status (TEXT, DEFAULT 'Новая')    | -- Текущий статус заявки
+| created_at (DATETIME, DEFAULT CS) | -- Время создания
+| updated_at (DATETIME, DEFAULT CS) | -- Время обновления
+| assignee_id (INTEGER, FK)         | -- Ссылка на Users.id (исполнитель)
+| tracking_token_hash (TEXT, NN)    | -- SHA-256 хеш токена отслеживания
 +-----------------------------------+
+```
+
 
 ## Инструкция по развертыванию и запуску
 
