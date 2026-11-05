@@ -8,9 +8,24 @@
 </head>
 <body>
     <div class="container" style="max-width: 1200px;">
+        
+        <!-- Flash-сообщения об успешном обновлении -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="ai-block {% if category == 'success' %}block-info{% else %}block-warning{% endif %}" style="padding: 12px; margin-bottom: 15px;">
+                        <p style="margin-bottom: 0; color: var(--text-main);">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1>Панель сотрудника</h1>
-            <a href="index.html" class="btn btn-outline">Выйти</a>
+            <div>
+                <h1>Панель сотрудника</h1>
+                <p style="margin-bottom: 0;"><small>Вы вошли как: <strong>{{ session.get('user_name', 'Сотрудник УПК') }}</strong></small></p>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline">Выйти</a>
         </div>
 
         <div class="table-container">
@@ -18,58 +33,65 @@
                 <thead>
                     <tr>
                         <th>Номер заявки</th>
-                        <th>Кабинет</th>
+                        <th>Кабинет / Корпус</th>
+                        <th>Категория</th>
                         <th>Текст проблемы</th>
                         <th>Текущий статус</th>
-                        <th>Действие</th>
+                        <th>Изменить статус</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>#UPK-1024</strong></td>
-                        <td>214</td>
-                        <td>Не работает проектор, не выводит изображение с ноутбука.</td>
-                        <td><span style="color: var(--primary); font-weight: 600;">В работе</span></td>
-                        <td>
-                            <select class="status-select">
-                                <option value="new">Новая</option>
-                                <option value="in_progress" selected>В работе</option>
-                                <option value="resolved">Решена</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>#UPK-1025</strong></td>
-                        <td>305</td>
-                        <td>Сломалась ручка на входной двери.</td>
-                        <td><span style="color: var(--text-muted); font-weight: 600;">Новая</span></td>
-                        <td>
-                            <select class="status-select">
-                                <option value="new" selected>Новая</option>
-                                <option value="in_progress">В работе</option>
-                                <option value="resolved">Решена</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>#UPK-1026</strong></td>
-                        <td>Лаб. 1</td>
-                        <td>В розетке искрит, пахнет горелым.</td>
-                        <td><span style="color: var(--success); font-weight: 600;">Решена</span></td>
-                        <td>
-                            <select class="status-select">
-                                <option value="new">Новая</option>
-                                <option value="in_progress">В работе</option>
-                                <option value="resolved" selected>Решена</option>
-                            </select>
-                        </td>
-                    </tr>
+                    {% if tickets %}
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td><strong>{{ ticket.public_number }}</strong></td>
+                            <td>
+                                {% if ticket.room %}
+                                    каб. {{ ticket.room }} ({{ ticket.building }})
+                                {% else %}
+                                    <span style="color: var(--text-muted);">Не указано</span>
+                                {% endif %}
+                            </td>
+                            <td><small>{{ ticket.category_name or 'Общая' }}</small></td>
+                            <td>{{ ticket.description }}</td>
+                            <td>
+                                <!-- Разнесли логику по чистым тегам, чтобы убрать конфликты парсера VS Code -->
+                                {% if ticket.status == 'Новая' %}
+                                    <span style="font-weight: 600; color: var(--text-muted);">{{ ticket.status }}</span>
+                                {% elif ticket.status == 'В работе' or ticket.status == 'На рассмотрении' %}
+                                    <span style="font-weight: 600; color: var(--primary);">{{ ticket.status }}</span>
+                                {% elif ticket.status == 'Решена' %}
+                                    <span style="font-weight: 600; color: var(--success);">{{ ticket.status }}</span>
+                                {% else %}
+                                    <span style="font-weight: 600; color: var(--danger-text);">{{ ticket.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ url_for('admin_panel') }}" method="POST" style="display: inline-flex; gap: 5px; align-items: center;">
+                                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                                    
+                                    <select name="status" class="status-select" onchange="this.form.submit()">
+                                        <option value="Новая" {% if ticket.status == 'Новая' %}selected{% endif %}>Новая</option>
+                                        <option value="На рассмотрении" {% if ticket.status == 'На рассмотрении' %}selected{% endif %}>На рассмотрении</option>
+                                        <option value="В работе" {% if ticket.status == 'В работе' %}selected{% endif %}>В работе</option>
+                                        <option value="Решена" {% if ticket.status == 'Решена' %}selected{% endif %}>Решена</option>
+                                        <option value="Отклонена" {% if ticket.status == 'Отклонена' %}selected{% endif %}>Отклонена</option>
+                                    </select>
+                                    
+                                    <input type="text" name="note" placeholder="Причина/заметка" style="padding: 6px; font-size: 12px; width: 130px; border-radius: 6px; border: 1px solid var(--border);">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 30px; color: var(--text-muted);">
+                                Новых или активных заявок в системе пока нет.
+                            </td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
-        </div>
-        
-        <div class="mt-4 text-center">
-            <button class="btn btn-primary" onclick="alert('Статусы успешно обновлены!')">Обновить</button>
         </div>
     </div>
 </body>
