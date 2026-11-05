@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="container" style="max-width: 1200px;">
-        
-        <!-- Flash-сообщения об успешном обновлении -->
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -25,7 +25,7 @@
                 <h1>Панель сотрудника</h1>
                 <p style="margin-bottom: 0;"><small>Вы вошли как: <strong>{{ session.get('user_name', 'Сотрудник УПК') }}</strong></small></p>
             </div>
-            <a href="{{ url_for('logout') }}" class="btn btn-outline">Выйти</a>
+            <a href="/" class="btn btn-outline">На главную</a>
         </div>
 
         <div class="table-container">
@@ -54,30 +54,17 @@
                             </td>
                             <td><small>{{ ticket.category_name or 'Общая' }}</small></td>
                             <td>{{ ticket.description }}</td>
-                            <td>
-                                <!-- Разнесли логику по чистым тегам, чтобы убрать конфликты парсера VS Code -->
-                                {% if ticket.status == 'Новая' %}
-                                    <span style="font-weight: 600; color: var(--text-muted);">{{ ticket.status }}</span>
-                                {% elif ticket.status == 'В работе' or ticket.status == 'На рассмотрении' %}
-                                    <span style="font-weight: 600; color: var(--primary);">{{ ticket.status }}</span>
-                                {% elif ticket.status == 'Решена' %}
-                                    <span style="font-weight: 600; color: var(--success);">{{ ticket.status }}</span>
-                                {% else %}
-                                    <span style="font-weight: 600; color: var(--danger-text);">{{ ticket.status }}</span>
-                                {% endif %}
-                            </td>
+                            <td><span style="font-weight: 600; color: var(--primary);">{{ ticket.status }}</span></td>
                             <td>
                                 <form action="{{ url_for('admin_panel') }}" method="POST" style="display: inline-flex; gap: 5px; align-items: center;">
                                     <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
-                                    
                                     <select name="status" class="status-select" onchange="this.form.submit()">
                                         <option value="Новая" {% if ticket.status == 'Новая' %}selected{% endif %}>Новая</option>
                                         <option value="На рассмотрении" {% if ticket.status == 'На рассмотрении' %}selected{% endif %}>На рассмотрении</option>
                                         <option value="В работе" {% if ticket.status == 'В работе' %}selected{% endif %}>В работе</option>
-                                        <option value="Решена" {% if ticket.status == 'Решена' %}selected{% endif %}>Решена</option>
+                                        <option value="Решена" {% if ticket.status == 'Решена' or ticket.status == 'Выполнено' %}selected{% endif %}>Решена</option>
                                         <option value="Отклонена" {% if ticket.status == 'Отклонена' %}selected{% endif %}>Отклонена</option>
                                     </select>
-                                    
                                     <input type="text" name="note" placeholder="Причина/заметка" style="padding: 6px; font-size: 12px; width: 130px; border-radius: 6px; border: 1px solid var(--border);">
                                 </form>
                             </td>
@@ -94,5 +81,13 @@
             </table>
         </div>
     </div>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    </script>
 </body>
 </html>

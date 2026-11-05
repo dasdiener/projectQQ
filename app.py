@@ -3,7 +3,6 @@ import sqlite3
 import secrets
 import hashlib
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-
 # Безопасный импорт логгера (заглушка спасет от ошибок, если logger.py еще не готов локально)
 try:
     from logger import log_event
@@ -42,6 +41,8 @@ def home():
     return render_template("index.html")
 
 # СТРАНИЦА СОЗДАНИЯ ЗАЯВКИ
+from datetime import datetime, timedelta
+
 @app.route("/create", methods=["GET", "POST"])
 def create_page():
     conn = get_db_connection()
@@ -57,14 +58,43 @@ def create_page():
             conn.close()
             return render_template("create.html", locations=locations, selected_location=location_id)
         
+        # 1. ЗАЩИТА ОТ ДУБЛИКАТОВ (ТЗ 12.2)
+        # Проверяем, не отправляли ли точно такой же текст с этой локации за последние 3 минуты
+        three_minutes_ago = (datetime.now() - timedelta(minutes=3)).strftime('%Y-%m-%d %H:%M:%S')
+        duplicate = conn.execute('''
+            SELECT id FROM Tickets 
+            WHERE description = ? AND location_id = ? AND created_at > ?
+        ''', (user_text, location_id, three_minutes_ago)).fetchone()
+        
+        if duplicate:
+            flash("Такое обращение уже было отправлено недавно. Пожалуйста, подождите немного.", "error")
+            locations = conn.execute('SELECT * FROM locations').fetchall()
+            conn.close()
+            return render_template("create.html", locations=locations, selected_location=location_id)
+        
         log_event("AI_REQUEST", f"Пользователь отправил запрос для локации ID {location_id}: '{user_text}'")
         
+        # Запрос к твоему ИИ (GigaChat / автономный модуль)
         ai_result = ask_gigachat(user_text)
         
-        log_event("AI_RESPONSE", f"ИИ вернул тип [{ai_result.get('type')}]. Создание тикета: {ai_result.get('need_ticket')}")
+        # 2. АВТОМАТИЧЕСКИЙ ПРИОРИТЕТ НА ОСНОВЕ ИИ (ТЗ 12.2)
+        # Высчитываем приоритет на основе типа проблемы, который определил ИИ
+        ai_type = ai_result.get('type')  # Ожидаем 'danger', 'damage', 'info' и т.д.
+        if ai_type == 'danger':
+            priority = "Критический"
+        elif ai_type == 'damage':
+            priority = "Высокий"
+        else:
+            priority = "Обычный"
+            
+        # Дописываем приоритет в словарь ответа ИИ, чтобы он улетел на страницу ai_result.html
+        ai_result['priority'] = priority
+        
+        log_event("AI_RESPONSE", f"ИИ вернул тип [{ai_type}]. Приоритет: {priority}. Создание тикета: {ai_result.get('need_ticket')}")
         
         locations = conn.execute('SELECT * FROM locations').fetchall()
         conn.close()
+        # Теперь шаблон ai_result.html будет принимать также переменную priority (через объект ai)
         return render_template("ai_result.html", ai=ai_result, text=user_text, location_id=location_id)
         
     qr_key = request.args.get('qr')

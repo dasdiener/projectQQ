@@ -8,33 +8,72 @@
 </head>
 <body>
     <div class="container">
-        <div style="margin-bottom: 20px;">
-            <a href="index.html" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 20px;">
+            <a href="/" style="color: var(--text-muted); text-decoration: none;">&larr; На главную</a>
+            <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">Изменить запрос</a>
         </div>
 
-        <!-- БЛОК 1: Опасность (Красный) -->
+        {% if ai_res.type == 'Потенциальная опасность' %}
         <div class="ai-block block-danger">
             <h3>Внимание! Потенциальная опасность</h3>
-            <p>Не пытайтесь устранить неисправность самостоятельно. Отойдите на безопасное расстояние, не трогайте оборудование и немедленно сообщите ответственному сотруднику или в экстренную службу.</p>
+            <p>{{ ai_res.answer }}</p>
+            <div style="margin-top: 15px;">
+                <a href="/" class="btn btn-outline" style="color: var(--danger-text); border-color: var(--danger-text);">Вернуться на главную</a>
+            </div>
         </div>
+        {% endif %}
 
-        <!-- БЛОК 2: Инструкция (Синий) -->
+        {% if ai_res.type == 'Информационный вопрос' %}
         <div class="ai-block block-info">
-            <h3>Инструкция</h3>
-            <p>Чтобы подключить ноутбук к проектору: 1. Подключите HDMI-кабель к ноутбуку. 2. Нажмите Win+P и выберите «Дублировать». 3. Если изображения нет, проверьте источник сигнала на проекторе (кнопка Source).</p>
-            <a href="index.html" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Вернуться на главную</a>
+            <h3>{{ ai_res.title }}</h3>
+            <p>{{ ai_res.answer }}</p>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <a href="/" class="btn btn-primary">Понятно, на главную</a>
+                <a href="/create?room={{ location_room or '' }}" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Задать другой вопрос</a>
+            </div>
         </div>
+        {% endif %}
 
-        <!-- БЛОК 3: Поломка (Желтый) -->
+        {% if ai_res.type == 'Обычная неисправность' %}
         <div class="ai-block block-warning">
-            <h3>Требуется мастер</h3>
-            <p>Судя по описанию, оборудование неисправно. Рекомендуем зафиксировать заявку, чтобы сотрудник УПК назначил исполнителя.</p>
+            <h3>Требуется мастер (Категория: {{ ai_res.category }})</h3>
+            <p>Вы ввели: <em>"{{ user_text }}"</em></p>
+            <p>Судя по описанию, оборудование или имущество неисправно. Нажмите на кнопку ниже, чтобы официально зарегистрировать инцидент в системе УПК.</p>
             
-            <form action="check_status.html" method="GET">
-                <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
+            <form action="/submit_ticket" method="POST">
+                <input type="hidden" name="description" value="{{ user_text }}">
+                <input type="hidden" name="location_id" value="{{ location_id }}">
+                <input type="hidden" name="title" value="{{ ai_res.title }}">
+                <input type="hidden" name="category" value="{{ ai_res.category }}">
+                
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
+                    <a href="/" class="btn btn-outline">Отмена</a>
+                </div>
             </form>
         </div>
+        {% endif %}
 
+        {% if ai_res.type == 'Недостаточно данных' %}
+        <div class="ai-block block-info" style="border-color: var(--border);">
+            <h3>{{ ai_res.title }}</h3>
+            <p>{{ ai_res.answer }}</p>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <a href="/create?room={{ location_room or '' }}" class="btn btn-primary">Попробовать снова</a>
+                <a href="/" class="btn btn-outline">На главную</a>
+            </div>
+        </div>
+        {% endif %}
     </div>
+
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+    </script>
 </body>
 </html>
