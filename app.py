@@ -96,7 +96,7 @@ def create_page():
         
         locations = conn.execute('SELECT * FROM Locations').fetchall()
         conn.close()
-        return render_template("ai_result.html", ai_res=ai_result, user_text=validated_text, location_id=location_id, location_room=room_number)
+        return render_template("ai_result.html", ai=ai_result, ai_res=ai_result, user_text=validated_text, location_id=location_id, location_room=room_number)
         
     qr_key = request.args.get('qr')
     selected_location = None
