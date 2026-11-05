@@ -54,7 +54,7 @@ def create_page():
     conn = get_db_connection()
     
     if request.method == "POST":
-        user_text = request.form.get("user_text", "").strip() # Синхронизировано имя поля с create.html
+        user_text = (request.form.get("user_text") or request.form.get("description") or "").strip() # Синхронизировано имя поля с create.html
         location_id = request.form.get("location_id")
         
         is_valid, validated_text = validate_user_text(user_text)
