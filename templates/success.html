@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <button id="theme-toggle" class="theme-toggle">Сменить тему</button>
+
     <div class="container">
+        <!-- остальной твой код формы... -->
         <div class="status-card" style="text-align: center; border-color: var(--success);">
             <h2 style="color: var(--success); margin-bottom: 10px;">Заявка успешно принята!</h2>
             <p>Инцидент зарегистрирован в официальной системе учета УПК.</p>
@@ -35,5 +38,23 @@
             </div>
         </div>
     </div>
+    <!-- Скрипт для переключения темы -->
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        
+        document.body.removeAttribute('data-theme');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                if (document.body.getAttribute('data-theme') === 'light') {
+                    document.body.removeAttribute('data-theme');
+                } else {
+                    document.body.setAttribute('data-theme', 'light');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
 </body>
 </html>
