@@ -1,8 +1,8 @@
 import os
 import datetime
 
-# Путь к файлу логов системы
-LOG_FILE_PATH = os.path.join(os.path.dirname(file), "system_events.log")
+# Путь к файлу логов системы — исправлено на __file__
+LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "system_events.log")
 
 def log_event(event_type, message):
     """
@@ -42,7 +42,8 @@ def get_latest_logs(limit=50):
     except Exception:
         return []
 
-if name == "main":
+# Исправлено на правильные системные переменные __name__ == "__main__"
+if __name__ == "__main__":
     # Тест автономной работы логгера
     print("Запуск теста журналирования...")
     log_event("SYSTEM_START", "Модуль logger.py успешно инициализирован локально")
