@@ -337,3 +337,126 @@ textarea { resize: vertical; min-height: 120px; }
 .mt-4 { margin-top: 20px; }
 .text-center { text-align: center; }
 .hidden { display: none; }
+/* ========================================= */
+/* СВЕТЛАЯ ТЕМА (Активируется через JS)      */
+/* ========================================= */
+
+/* Кнопка переключения темы */
+.theme-toggle {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    background: transparent; /* Прозрачный фон */
+    color: #c4b5fd; /* Светло-фиолетовый текст */
+    border: 1px solid #8b5cf6; /* Фиолетовая обводка */
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(139, 92, 246, 0.15); /* При наведении появляется фиолетовый фон */
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); /* Легкое свечение */
+}
+
+/* Стили для светлой темы (когда body имеет data-theme="light") */
+body[data-theme="light"] .theme-toggle {
+    color: #6d28d9;
+    border-color: #8b5cf6;
+    background: transparent;
+}
+
+body[data-theme="light"] .theme-toggle:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: #4c1d95;
+}
+/* ========================================= */
+/* ПРЕМИАЛЬНАЯ СВЕТЛАЯ ТЕМА                  */
+/* ========================================= */
+
+/* Фон страницы (светло-серый с легким фиолетовым оттенком) */
+body[data-theme="light"] {
+    background-color: #eef2f6; /* Мягкий серо-голубой фон */
+    background-image: radial-gradient(circle at top center, #e2e8f0 0%, #eef2f6 100%);
+    color: #0f172a;
+}
+
+/* Карточка (Чисто белая с глубокой тенью, чтобы выделяться на фоне) */
+body[data-theme="light"] .hero,
+body[data-theme="light"] .status-card,
+body[data-theme="light"] .ai-block {
+    background: #ffffff; /* Чистый белый */
+    backdrop-filter: none; /* Убираем стекло, чтобы карточка была плотной */
+    border: 1px solid #e2e8f0;
+    /* Глубокая, красивая тень */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), 
+                0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+/* Заголовки */
+body[data-theme="light"] h1,
+body[data-theme="light"] .hero h1 {
+    color: #3b0764; /* Насыщенный фиолетовый */
+}
+
+body[data-theme="light"] .status-card h2,
+body[data-theme="light"] .status-card h3,
+body[data-theme="light"] .ai-block h3 {
+    color: #1e293b;
+}
+
+/* Текст */
+body[data-theme="light"] p,
+body[data-theme="light"] .hero p,
+body[data-theme="light"] .status-card p,
+body[data-theme="light"] .ai-block p {
+    color: #475569;
+}
+
+/* Второстепенные кнопки (Белые с четкой рамкой и тенью) */
+body[data-theme="light"] .btn-outline {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+body[data-theme="light"] .btn-outline:hover {
+    background: #f8fafc;
+    border-color: #8b5cf6;
+    color: #6d28d9;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Главная кнопка */
+body[data-theme="light"] .btn-primary {
+    box-shadow: 0 8px 25px -8px rgba(139, 92, 246, 0.6);
+}
+
+/* Поля ввода */
+body[data-theme="light"] select, 
+body[data-theme="light"] textarea, 
+body[data-theme="light"] input[type="text"] {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+}
+body[data-theme="light"] select:focus, 
+body[data-theme="light"] textarea:focus {
+    background: #ffffff;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+/* Кнопка смены темы */
+body[data-theme="light"] .theme-toggle {
+    background: #ffffff;
+    color: #6d28d9;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
