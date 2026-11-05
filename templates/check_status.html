@@ -10,82 +10,61 @@
     <button id="theme-toggle" class="theme-toggle">Сменить тему</button>
 
     <div class="container">
-        <!-- остальной твой код формы... -->
-        <button class="theme-toggle-btn" id="themeToggle">Сменить тему</button>
-
         <div style="margin-bottom: 20px;">
             <a href="/" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
         </div>
 
         <div class="status-card">
             <h2>Проверка статуса заявки</h2>
-            <p>Введите секретный токен отслеживания, который вы получили после создания обращения.</p>
+            <p>Введите секретный токен, который вы получили после создания заявки.</p>
             
-            <form action="/check_status" method="GET" style="margin-top: 20px; margin-bottom: 30px;">
+            <!-- ВАЖНО: action="/status" отправляет данные на правильный маршрут Python -->
+            <form action="/status" method="GET" style="margin-top: 20px; margin-bottom: 30px;">
                 <div class="form-group" style="display: flex; gap: 10px;">
-                    <input type="text" name="token" placeholder="Вставьте токен отслеживания..." value="{{ request.args.get('token', '') }}" style="flex: 1;">
+                    <input type="text" name="token" placeholder="Например: A1B2C3D4..." required style="flex: 1;">
                     <button type="submit" class="btn btn-primary">Узнать статус</button>
                 </div>
             </form>
 
+            <!-- Блок для вывода результата (если Python передаст данные) -->
             {% if ticket %}
-            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: var(--bg-main);">
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: rgba(139, 92, 246, 0.1);">
                 <h3 style="color: var(--success); margin-bottom: 15px;">Заявка найдена</h3>
-                <p><strong>Официальный номер:</strong> {{ ticket.public_number }}</p>
-                <p><strong>Помещение:</strong> Кабинет {{ ticket.room or 'Не указан' }} ({{ ticket.building or '' }})</p>
-                <p><strong>Тема инцидента:</strong> {{ ticket.title }}</p>
+                <p><strong>Номер:</strong> {{ ticket.public_number }}</p>
+                <p><strong>Кабинет:</strong> {{ ticket.room }}</p>
                 <p><strong>Что случилось:</strong> {{ ticket.description }}</p>
-                <p><strong>Текущий статус:</strong> 
-                    <span style="font-weight: 600; color: var(--primary);">{{ ticket.status }}</span>
-                </p>
-                <p><small>Дата регистрации: {{ ticket.created_at }}</small></p>
+                <p><strong>Текущий статус:</strong> <span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 14px;">{{ ticket.status }}</span></p>
             </div>
-            {% endif %}
-
-            {% if error_message %}
-            <div class="ai-block block-danger" style="padding: 15px; border-radius: 8px;">
-                <h3 style="margin-top: 0;">Ошибка проверки</h3>
-                <p style="margin-bottom: 0;">{{ error_message }}</p>
+            {% elif error %}
+            <div style="border: 1px solid var(--danger-border); border-radius: 8px; padding: 20px; background: rgba(239, 68, 68, 0.1);">
+                <p style="color: var(--danger-text); font-weight: 600;">{{ error }}</p>
             </div>
             {% endif %}
         </div>
     </div>
 
-    <script>
-        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-        });
-    </script>
     <!-- Скрипт для переключения темы -->
-       <script>
+    <script>
         const toggleBtn = document.getElementById('theme-toggle');
-        
-        // Проверяем, есть ли сохраненная тема. Если нет — ставим темную по умолчанию.
         const currentTheme = localStorage.getItem('theme') || 'dark';
 
-        // Если сохранена светлая тема, применяем её при загрузке
         if (currentTheme === 'light') {
             document.body.setAttribute('data-theme', 'light');
         } else {
             document.body.removeAttribute('data-theme');
         }
 
-        // Обработчик клика по кнопке
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 if (document.body.getAttribute('data-theme') === 'light') {
                     document.body.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'dark'); // Запоминаем темную
+                    localStorage.setItem('theme', 'dark');
                 } else {
                     document.body.setAttribute('data-theme', 'light');
-                    localStorage.setItem('theme', 'light'); // Запоминаем светлую
+                    localStorage.setItem('theme', 'light');
                 }
             });
         }
     </script>
-</body>
-</html>
 </body>
 </html>

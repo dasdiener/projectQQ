@@ -10,7 +10,6 @@
     <button id="theme-toggle" class="theme-toggle">Сменить тему</button>
 
     <div class="container">
-        <!-- остальной твой код формы... -->
         <div style="margin-bottom: 20px; display: flex; gap: 20px;">
             <a href="/" style="color: var(--text-muted); text-decoration: none;">&larr; На главную</a>
             <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">Изменить запрос</a>
@@ -69,41 +68,28 @@
         {% endif %}
     </div>
 
-    <script>
-        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-        });
-    </script>
     <!-- Скрипт для переключения темы -->
-       <script>
+    <script>
         const toggleBtn = document.getElementById('theme-toggle');
-        
-        // Проверяем, есть ли сохраненная тема. Если нет — ставим темную по умолчанию.
         const currentTheme = localStorage.getItem('theme') || 'dark';
 
-        // Если сохранена светлая тема, применяем её при загрузке
         if (currentTheme === 'light') {
             document.body.setAttribute('data-theme', 'light');
         } else {
             document.body.removeAttribute('data-theme');
         }
 
-        // Обработчик клика по кнопке
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 if (document.body.getAttribute('data-theme') === 'light') {
                     document.body.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'dark'); // Запоминаем темную
+                    localStorage.setItem('theme', 'dark');
                 } else {
                     document.body.setAttribute('data-theme', 'light');
-                    localStorage.setItem('theme', 'light'); // Запоминаем светлую
+                    localStorage.setItem('theme', 'light');
                 }
             });
         }
     </script>
-</body>
-</html>
 </body>
 </html>
