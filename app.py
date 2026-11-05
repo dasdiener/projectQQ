@@ -204,7 +204,7 @@ def admin_panel():
             conn.commit()
             log_event("TICKET_STATUS", f"Сотрудник ID {session['user_id']} изменил статус тикета ID {ticket_id} на '{new_status}'")
             flash(f"Статус заявки успешно изменен на '{new_status}'", "success")
-                        return redirect(url_for('admin_panel'))
+        return redirect(url_for('admin_panel'))
 
     # GET-запрос: Выгружаем все заявки для отображения в таблице админки
     tickets = conn.execute('''
