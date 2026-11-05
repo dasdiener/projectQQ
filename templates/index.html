@@ -34,20 +34,31 @@
     </div>
 
        <!-- Скрипт для переключения темы -->
-    <script>
+        <script>
         const toggleBtn = document.getElementById('theme-toggle');
         
-        // При загрузке страницы всегда принудительно ставим темную тему
-        document.body.removeAttribute('data-theme');
+        // Проверяем, есть ли сохраненная тема. Если нет — ставим темную по умолчанию.
+        const currentTheme = localStorage.getItem('theme') || 'dark';
 
-        toggleBtn.addEventListener('click', () => {
-            // Проверяем текущую тему и переключаем
-            if (document.body.getAttribute('data-theme') === 'light') {
-                document.body.removeAttribute('data-theme');
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-            }
-        });
+        // Если сохранена светлая тема, применяем её при загрузке
+        if (currentTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+
+        // Обработчик клика по кнопке
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                if (document.body.getAttribute('data-theme') === 'light') {
+                    document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'dark'); // Запоминаем темную
+                } else {
+                    document.body.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light'); // Запоминаем светлую
+                }
+            });
+        }
     </script>
 </body>
 </html>

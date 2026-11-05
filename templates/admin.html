@@ -91,19 +91,28 @@
             document.body.classList.toggle('light-theme');
             localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
         });
-    </script>
-    <!-- Скрипт для переключения темы -->
-    <script>
+        <script>
         const toggleBtn = document.getElementById('theme-toggle');
         
-        document.body.removeAttribute('data-theme');
+        // Проверяем, есть ли сохраненная тема. Если нет — ставим темную по умолчанию.
+        const currentTheme = localStorage.getItem('theme') || 'dark';
 
+        // Если сохранена светлая тема, применяем её при загрузке
+        if (currentTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+
+        // Обработчик клика по кнопке
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 if (document.body.getAttribute('data-theme') === 'light') {
                     document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'dark'); // Запоминаем темную
                 } else {
                     document.body.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light'); // Запоминаем светлую
                 }
             });
         }
