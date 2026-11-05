@@ -460,3 +460,51 @@ body[data-theme="light"] .theme-toggle {
     border: 1px solid #cbd5e1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
+/* ========================================= */
+/* ЦВЕТА ДЛЯ ТАБЛИЦЫ В ТЕМНОЙ ТЕМЕ (КОНТРАСТ) */
+/* ========================================= */
+body:not([data-theme="light"]) h1 {
+    color: #ffffff;
+}
+
+body:not([data-theme="light"]) .table-container {
+    background: #1e1b2e; /* Фон таблицы чуть светлее фона страницы */
+    border: 1px solid #4c1d95;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body:not([data-theme="light"]) th {
+    background: #13111c;
+    color: #a78bfa; /* Светло-фиолетовый для заголовков */
+    border-bottom: 1px solid #4c1d95;
+    font-weight: 600;
+}
+
+body:not([data-theme="light"]) td {
+    color: #f8fafc; /* Ярко-белый текст для ячеек */
+    border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+/* Чтобы статусы были заметными */
+body:not([data-theme="light"]) td span[style*="color"] {
+    color: #c4b5fd !important; 
+    text-shadow: 0 0 8px rgba(139, 92, 246, 0.4); 
+}
+
+body:not([data-theme="light"]) .status-select {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #6d28d9;
+}
+
+body:not([data-theme="light"]) .status-select option {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+/* Поле для заметки */
+body:not([data-theme="light"]) input[type="text"] {
+    background: #0f172a;
+    color: #ffffff;
+    border: 1px solid #4c1d95;
+}
