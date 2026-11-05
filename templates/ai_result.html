@@ -9,31 +9,57 @@
 <body>
     <div class="container">
         <div style="margin-bottom: 20px;">
-            <a href="index.html" style="color: var(--primary); text-decoration: none;">&larr; На главную</a>
+            <!-- Исправлена ссылка на роут создания новой заявки -->
+            <a href="/create?room={{ location_room or '' }}" style="color: var(--primary); text-decoration: none;">&larr; Назад к форме</a>
         </div>
+
+        {# Проверяем тип ответа ИИ, который пришел из бэкенда (переменная ai_res) #}
 
         <!-- БЛОК 1: Опасность (Красный) -->
+        {% if ai_res.type == 'Потенциальная опасность' %}
         <div class="ai-block block-danger">
             <h3>Внимание! Потенциальная опасность</h3>
-            <p>Не пытайтесь устранить неисправность самостоятельно. Отойдите на безопасное расстояние, не трогайте оборудование и немедленно сообщите ответственному сотруднику или в экстренную службу.</p>
+            <p>{{ ai_res.answer }}</p>
         </div>
+        {% endif %}
 
         <!-- БЛОК 2: Инструкция (Синий) -->
+        {% if ai_res.type == 'Информационный вопрос' %}
         <div class="ai-block block-info">
-            <h3>Инструкция</h3>
-            <p>Чтобы подключить ноутбук к проектору: 1. Подключите HDMI-кабель к ноутбуку. 2. Нажмите Win+P и выберите «Дублировать». 3. Если изображения нет, проверьте источник сигнала на проекторе (кнопка Source).</p>
-            <a href="index.html" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Вернуться на главную</a>
+            <h3>{{ ai_res.title }}</h3>
+            <p>{{ ai_res.answer }}</p>
+            <a href="/create?room={{ location_room or '' }}" class="btn btn-outline" style="color: var(--info-text); border-color: var(--info-border);">Вернуться назад</a>
         </div>
+        {% endif %}
 
         <!-- БЛОК 3: Поломка (Желтый) -->
+        {% if ai_res.type == 'Обычная неисправность' %}
         <div class="ai-block block-warning">
-            <h3>Требуется мастер</h3>
-            <p>Судя по описанию, оборудование неисправно. Рекомендуем зафиксировать заявку, чтобы сотрудник УПК назначил исполнителя.</p>
+            <h3>Требуется мастер (Категория: {{ ai_res.category }})</h3>
+            <p>Вы ввели: <em>"{{ user_text }}"</em></p>
+            <p>Судя по описанию, оборудование или имущество неисправно. Нажмите на кнопку ниже, чтобы официально зарегистрировать инцидент в системе УПК.</p>
             
-            <form action="check_status.html" method="GET">
+            <!-- Форма отправляет данные на созданный роут фиксации в базу -->
+            <form action="/submit_ticket" method="POST">
+                <!-- Передаем скрытые параметры, которые ИИ уже распарсил, чтобы не вводить их заново -->
+                <input type="hidden" name="description" value="{{ user_text }}">
+                <input type="hidden" name="location_id" value="{{ location_id }}">
+                <input type="hidden" name="title" value="{{ ai_res.title }}">
+                <input type="hidden" name="category" value="{{ ai_res.category }}">
+                
                 <button type="submit" class="btn btn-success">Да, зафиксировать заявку</button>
             </form>
         </div>
+        {% endif %}
+
+        <!-- БЛОК 4: Недостаточно данных (Дополнительная страховка под логику ИИ) -->
+        {% if ai_res.type == 'Недостаточно данных' %}
+        <div class="ai-block block-info" style="border-color: var(--border);">
+            <h3>{{ ai_res.title }}</h3>
+            <p>{{ ai_res.answer }}</p>
+            <a href="/create?room={{ location_room or '' }}" class="btn btn-outline">Попробовать снова</a>
+        </div>
+        {% endif %}
 
     </div>
 </body>

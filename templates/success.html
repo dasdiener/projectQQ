@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявка успешно создана</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="status-card" style="text-align: center; border-color: var(--success);">
+            <h2 style="color: var(--success); margin-bottom: 10px;">Заявка успешно принята!</h2>
+            <p>Инцидент зарегистрирован в официальной системе учета УПК.</p>
+
+            <div style="background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px; padding: 25px; margin: 25px 0; text-align: left;">
+                <p style="font-size: 18px; margin-bottom: 15px;">
+                    <strong>Номер обращения:</strong> 
+                    <span style="color: var(--primary); font-weight: 700;">{{ number }}</span>
+                </p>
+                
+                <p style="margin-bottom: 10px;"><strong>Секретный токен отслеживания:</strong></p>
+                <!-- Выводим сгенерированный secrets.token_urlsafe токен -->
+                <div style="background: var(--border); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 16px; word-break: break-all; color: var(--text-main); font-weight: 600; text-align: center; margin-bottom: 15px;">
+                    {{ token }}
+                </div>
+                
+                <p style="margin-bottom: 0; font-size: 13px; color: var(--text-muted);">
+                    <strong>Важно:</strong> Сохраните или скопируйте этот токен. С его помощью вы сможете проверять статус выполнения ремонта без необходимости авторизации в системе.
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a href="/check_status?token={{ token }}" class="btn btn-primary">Проверить статус заявки</a>
+                <a href="/create" class="btn btn-outline">На главную</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
