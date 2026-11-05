@@ -10,7 +10,7 @@
     <div class="container">
         <div style="margin-bottom: 20px;">
             <!-- Ссылка ведет на главную или на роут проверки статуса -->
-            <a href="/check_status" style="color: var(--primary); text-decoration: none;">&larr; Проверить статус существующей заявки</a>
+            <a href="{{ url_for('check_status') }}" style="color: var(--primary); text-decoration: none;">&larr; Проверить статус существующей заявки</a>
         </div>
         
         <div class="status-card">
