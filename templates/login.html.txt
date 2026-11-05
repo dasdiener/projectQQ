@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в панель УПК</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle">Сменить тему</button>
+
+    <div class="container">
+        <div class="status-card" style="max-width: 400px; margin: 100px auto;">
+            <h2 style="text-align: center; margin-bottom: 20px;">Вход в систему</h2>
+            <p style="text-align: center; margin-bottom: 30px;">Доступ только для сотрудников УПК</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" name="username" id="username" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" name="password" id="password" required placeholder="Введите пароль">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Войти</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 14px;">&larr; На главную</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+
+        if (currentTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                if (document.body.getAttribute('data-theme') === 'light') {
+                    document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
